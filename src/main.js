@@ -28,6 +28,11 @@ Vue.filter('dateFormat', function (dataStr, pattern = "YYYY-MM-DD HH:mm:ss") {
   return moment(parseInt(dataStr)).format(pattern);
 })
 
+Vue.filter('money', function (money) {
+  let num = Number(money);
+  return num.toFixed(2);
+})
+
 new Vue({
   router,
   store,

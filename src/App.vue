@@ -1,43 +1,68 @@
 <template>
-  <div id="app">
-    <transition>
-      <router-view></router-view>
-    </transition>
-  </div>
+  <el-container>
+    <el-header id="tobar" class="shadow_base">
+      <div class="title">
+        <span class="mdi mdi-book"></span> 记账薄
+        <span class="subtitle">| Bookkeeping</span>
+      </div>
+      <el-menu :default-active="'home'" class="nav_menu" mode="horizontal" @select="handleSelect">
+        <el-menu-item index="home">记账薄</el-menu-item>
+        <el-menu-item index="data">数据</el-menu-item>
+        <el-menu-item index="center">个人中心</el-menu-item>
+      </el-menu>
+    </el-header>
+    <div id="main" class="container">
+      <transition>
+        <router-view></router-view>
+      </transition>
+    </div>
+  </el-container>
 </template>
 
 <script>
 export default {
-  
+  methods: {
+    handleSelect(index) {
+      this.$router.push("/" + index);
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
+#tobar {
+  display: flex;
+  background-color: #fff;
+  .title {
+    background-color: #fff;
+    line-height: 60px;
+    width: 50%;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 1.3rem;
+    font-weight: lighter;
+  }
+  .nav_menu {
+    width: 50%;
+    li {
+      float: right !important;
+    }
+  }
+  @media screen and (max-width: 550px) {
+    .title {
+      font-size: 16px;
+      width: 28%;
+      .subtitle {
+        display: none;
+      }
+    }
+    .nav_menu {
+      width: 100%;
+    }
+  }
+}
+#main{
+  margin-top: 20px;
+}
 </style>
 
-<style lang="scss">
-html {
-  height: 100%;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-}
-body {
-  height: 100%;
-  background-color: #f4f5f5 !important;
-  margin: 0;
-}
-.v-enter {
-  opacity: 0;
-  transform: translateX(100%);
-}
-.v-leave-to {
-  opacity: 0;
-  transform: translateX(-100%);
-  position: absolute;
-}
-.v-enter-active,
-.v-leave-active {
-  transition: all 1s ease;
-}
-</style>
 

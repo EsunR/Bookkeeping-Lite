@@ -12,8 +12,6 @@ export default {};
 
 <style lang="scss" scoped>
 #box {
-  width: 1200px;
-  margin: 0 auto;
   height: 100%;
   display: flex;
   justify-content: center; /* 水平居中 */
@@ -38,9 +36,9 @@ body {
   height: 100%;
   background-color: #f4f5f5 !important;
 }
-hr{
+hr {
   margin: 20px 0;
-  opacity: .2;
+  opacity: 0.2;
 }
 </style>
 

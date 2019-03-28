@@ -10,12 +10,12 @@
     >
       <el-row :gutter="20">
         <el-col :md="12">
-          <el-form-item label="消费金额" prop="money">
+          <el-form-item label="收入金额" prop="money">
             <el-input v-model="form.money" placeholder="请填写"></el-input>
           </el-form-item>
         </el-col>
         <el-col :md="12">
-          <el-form-item label="消费时间" prop="time">
+          <el-form-item label="时间" prop="time">
             <el-date-picker
               style="width: 100%"
               v-model="form.time"
@@ -50,7 +50,16 @@ export default {
       },
       rules: {
         money: [
-          { required: true, message: "请输入金额", trigger: ["blur", "change"] }
+          {
+            required: true,
+            message: "请输入金额",
+            trigger: ["blur", "change"]
+          },
+          {
+            pattern: /^[0-9]*(|.[0-9]+)$/,
+            message: "请输入数字",
+            trigger: ["blur", "change"]
+          }
         ]
       }
     };
@@ -66,15 +75,17 @@ export default {
       });
     },
     postForm() {
-      // TODO: 添加收入
       let obj = this.form;
       obj.time = this.form.time.toString();
+      obj.money = Number(this.form.money)
+        .toFixed(2)
+        .toString();
       this.axios
         .post("/addIn", obj)
         .then(res => {
           if (res.data.code == 1) {
             this.$message.success("添加成功");
-            this.$router.push("/home");
+            this.$router.push("/home/income");
           }
         })
         .catch(err => {

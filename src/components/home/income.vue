@@ -1,13 +1,20 @@
 <template>
   <div id="income">
-    income
+    <inList :time1="''" :time2="Date.parse(new Date()).toString()"></inList>
   </div>
 </template>
 
 <script>
+import inList from "../subComponents/inList.vue";
 export default {
   data() {
-    return {};
+    return {
+      time1: "",
+      time2: Date.parse(new Date()).toString()
+    };
+  },
+  components: {
+    inList
   }
 };
 </script>

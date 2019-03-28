@@ -75,7 +75,16 @@ export default {
       },
       rules: {
         money: [
-          { required: true, message: "请输入金额", trigger: ["blur", "change"] }
+          {
+            required: true,
+            message: "请输入金额",
+            trigger: ["blur", "change"]
+          },
+          {
+            pattern: /^[0-9]*(|.[0-9]+)$/,
+            message: "请输入数字",
+            trigger: ["blur", "change"]
+          }
         ]
       },
       sort: [],
@@ -112,6 +121,7 @@ export default {
     postForm() {
       let obj = this.form;
       obj.time = this.form.time.toString();
+      obj.money = (Number(this.form.money).toFixed(2)).toString();
       this.axios
         .post("/addOut", obj)
         .then(res => {

@@ -24,7 +24,29 @@ export default {
   methods: {
     handleSelect(index) {
       this.$router.push("/" + index);
+    },
+    getUserInfo() {
+      this.axios
+        .get("/getUserInfo")
+        .then(res => {
+          if (res.data.code == 1) {
+            let obj = res.data.data;
+            obj.regTime = res.data.data.regTime.toString();
+            obj.uid = res.data.data.uid.toString();
+            this.$store.commit("setState", obj);
+          } else {
+            this.$message.error("登录状态异常，请重新登录");
+            window.location.href = this.COMMON.login_location;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.$message("服务器无法连接");
+        });
     }
+  },
+  mounted() {
+    this.getUserInfo();
   }
 };
 </script>
@@ -60,7 +82,7 @@ export default {
     }
   }
 }
-#main{
+#main {
   margin-top: 20px;
 }
 </style>

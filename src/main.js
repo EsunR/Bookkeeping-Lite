@@ -33,6 +33,20 @@ Vue.filter('money', function (money) {
   return num.toFixed(2);
 })
 
+Vue.filter('way', function (wayId) {
+  wayId = wayId.toString();
+  switch (wayId) {
+    case "1":
+      return "现金";
+    case "2":
+      return "支付宝";
+    case "3":
+      return "微信";
+    case "4":
+      return "其他";
+  }
+})
+
 new Vue({
   router,
   store,

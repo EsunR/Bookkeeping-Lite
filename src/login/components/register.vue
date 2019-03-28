@@ -65,21 +65,22 @@ export default {
           let obj = {
             account: this.registerForm.account,
             password: this.registerForm.password,
-            name: this.registerForm.name
+            name: this.registerForm.name,
+            regTime: Date.parse(new Date()).toString()
           };
           console.log(obj);
-          // TODO: 接入注册API
           this.axios
             .post("/register", obj)
             .then(res => {
               if (res.data.code == 1) {
-                this.$message("注册成功，请登录");
+                this.$message.success("注册成功，请登录");
                 this.$router.push("/login");
               } else {
-                this.$message("该用户名已被占用，注册失败");
+                this.$message("该账号已被占用，注册失败");
               }
             })
-            .catch(() => {
+            .catch(err => {
+              console.log(err);
               this.$message("无法连接服务器");
             });
         } else {

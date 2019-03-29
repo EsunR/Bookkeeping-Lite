@@ -38,7 +38,7 @@
 export default {
   data() {
     return {
-      todayOut: 110,
+      todayOut: 0,
       todayIn: 0,
       percentage: 0,
       status: "success"
@@ -57,28 +57,64 @@ export default {
         this.status = "exception";
       }
     },
-    getTodyOut() {
+    getTodayOut() {
       this.axios
-        .post("/getOutList", {
+        .get("/getOutList", {
           params: {
-            time1: this.$moment().startOf("day").valueOf().toString(),
-            time2: Date.parse(new Date()).toString()
+            time1: this.$moment()
+              .startOf("day")
+              .valueOf(),
+            time2: this.$moment()
+              .endOf("day")
+              .valueOf()
           }
         })
         .then(res => {
           if (res.data.code == 1) {
-            console.log(res.data.data);
+            let list = res.data.data[0];
+            let todayOut = 0;
+            for (let i in list) {
+              todayOut += Number(list[i].money);
+            }
+            this.todayOut = todayOut;
           }
         })
         .catch(err => {
           console.log(err);
           this.$message("服务器无法连接");
         });
-    }
+    },
+    getTodayIn() {
+      this.axios
+        .get("/getInList", {
+          params: {
+            time1: this.$moment()
+              .startOf("day")
+              .valueOf(),
+            time2: this.$moment()
+              .endOf("day")
+              .valueOf()
+          }
+        })
+        .then(res => {
+          if (res.data.code == 1) {
+            let list = res.data.data[0];
+            let todayIn = 0;
+            for (let i in list) {
+              todayIn += Number(list[i].money);
+            }
+            this.todayIn = todayIn;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.$message("服务器无法连接");
+        });
+    },
   },
   mounted() {
     this.getProgressbarData();
-    // this.getTodyOut();
+    this.getTodayOut();
   }
 };
 </script>

@@ -115,6 +115,7 @@ export default {
   mounted() {
     this.getProgressbarData();
     this.getTodayOut();
+    this.getTodayIn();
   }
 };
 </script>

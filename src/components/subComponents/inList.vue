@@ -6,7 +6,7 @@
         {{$moment(Number(item[0].time)).format('LL')}}
         <span
           v-if="$moment().format('LL') == $moment(Number(item[0].time)).format('LL')"
-          style="background:#409EFF; padding: 2px 8px; color: white; border-radius: 5px;"
+          style="background:#409EFF; padding: 2px 8px; color: white; border-radius: 5px; margin-left: 10px;"
         >今天</span>
       </div>
       <hr>

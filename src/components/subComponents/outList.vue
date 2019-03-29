@@ -157,7 +157,7 @@ export default {
       dialogFormVisible: false
     };
   },
-  props: ["time1", "time2"],
+  props: ["time1", "time2", "sortId"],
   methods: {
     getOutList() {
       this.axios
@@ -170,6 +170,9 @@ export default {
         .then(res => {
           if (res.data.code == 1) {
             this.outList = res.data.data;
+            if (this.sortId) {
+              this.filterData();
+            }
           }
         })
         .catch(err => {
@@ -248,6 +251,24 @@ export default {
           console.log(err);
           this.$message("服务器无法连接，获取消费类型失败");
         });
+    },
+    filterData() {
+      // 深度拷贝this.outList对象
+      let filted = JSON.parse(JSON.stringify(this.outList));
+      // 处理记录，过滤掉非目标数据（注意：由于是由数组索引删除数组，所以需要倒序删除）
+      for (let i = filted.length - 1; i >= 0; i--) {
+        for (let j = filted[i].length - 1; j >= 0; j--) {
+          if (filted[i][j].sortId != parseInt(this.sortId)) {
+            filted[i].splice(j, 1);
+          }
+        }
+        // 如果过滤后，当天的记录全部被过滤掉，则删除该条记录
+        if (filted[i].length == 0) {
+          filted.splice(i, 1);
+        }
+      }
+      // 集中更改数据，触发Vue刷新视图
+      this.outList = filted;
     }
   },
   mounted() {

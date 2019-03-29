@@ -2,7 +2,13 @@
   <div id="list">
     <div class="empty card" v-if="this.outList.length == 0">（暂无支出项）</div>
     <div class="day card" v-for="(item,index) in outList" :key="index">
-      <div class="title">{{$moment(Number(item[0].time)).format('LL')}}</div>
+      <div class="title">
+        {{$moment(Number(item[0].time)).format('LL')}}
+        <span
+          v-if="$moment().format('LL') == $moment(Number(item[0].time)).format('LL')"
+          style="background:#409EFF; padding: 2px 8px; color: white; border-radius: 5px;"
+        >今天</span>
+      </div>
       <hr>
       <div
         class="dayList"

@@ -2,7 +2,13 @@
   <div id="list">
     <div class="empty card" v-if="this.inList.length == 0">（暂无收入项）</div>
     <div class="day card" v-for="(item,index) in inList" :key="index">
-      <div class="title">{{$moment(Number(item[0].time)).format('LL')}}</div>
+      <div class="title">
+        {{$moment(Number(item[0].time)).format('LL')}}
+        <span
+          v-if="$moment().format('LL') == $moment(Number(item[0].time)).format('LL')"
+          style="background:#409EFF; padding: 2px 8px; color: white; border-radius: 5px;"
+        >今天</span>
+      </div>
       <hr>
       <div
         class="dayList"
@@ -10,7 +16,10 @@
         :key="subItem.id"
         @click="showAlterModel(subItem.id)"
       >
-        <div class="remark"><span v-if="subItem.remark == ''">收入</span>{{subItem.remark}}</div>
+        <div class="remark">
+          <span v-if="subItem.remark == ''">收入</span>
+          {{subItem.remark}}
+        </div>
         <div class="money">+{{subItem.money | money}}元</div>
       </div>
     </div>
@@ -133,7 +142,6 @@ export default {
           let obj = this.form;
           obj.money = this.form.money.toString();
           obj.time = this.form.time.toString();
-          console.log(obj);
           this.axios
             .post("/alterIn", this.form)
             .then(res => {

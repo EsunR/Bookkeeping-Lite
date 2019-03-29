@@ -15,6 +15,10 @@ import addIncome from './components/add/addIncome.vue'
 
 // data
 import data from './components/data/data.vue'
+import month from './components/data/month.vue'
+import week from './components/data/week.vue'
+import compared from './components/data/compared.vue'
+import customize from './components/data/customize.vue'
 
 Vue.use(Router)
 
@@ -56,7 +60,25 @@ var router = new Router({
     },
     {
       path: '/data',
-      component: data
+      component: data,
+      children:[
+        {
+          path: 'week',
+          component: week
+        },
+        {
+          path: 'month',
+          component: month
+        },
+        {
+          path: 'compared',
+          component: compared
+        },
+        {
+          path: 'customize',
+          component: customize
+        }
+      ]
     }
   ]
 })

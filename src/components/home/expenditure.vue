@@ -2,8 +2,7 @@
   <div id="expenditure">
     <outList 
       :time1="''" 
-      :time2="Date.parse(new Date()).toString()" 
-      sortId="2"
+      :time2="Date.parse(new Date()).toString()"
     ></outList>
   </div>
 </template>

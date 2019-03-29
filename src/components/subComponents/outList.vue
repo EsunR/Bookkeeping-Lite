@@ -205,7 +205,6 @@ export default {
           obj.money = this.form.money.toString();
           obj.sort = this.form.sort.toString();
           obj.time = this.form.time.toString();
-          console.log(obj);
           this.axios
             .post("/alterOut", this.form)
             .then(res => {

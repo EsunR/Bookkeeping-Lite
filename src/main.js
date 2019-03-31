@@ -11,6 +11,12 @@ import './assets/style.css'
 import "bootstrap"
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
 import "../node_modules/@mdi/font/css/materialdesignicons.min.css"
+import VeLine from 'v-charts/lib/line.common'
+import VePie from 'v-charts/lib/pie.common.js'
+
+// 引入V-charts
+Vue.component(VeLine.name, VeLine)
+Vue.component(VePie.name, VePie)
 
 
 // 将引入的全局设置文件绑定到Vue的COMMON属性上

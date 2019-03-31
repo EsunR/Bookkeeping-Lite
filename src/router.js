@@ -61,6 +61,7 @@ var router = new Router({
     {
       path: '/data',
       component: data,
+      redirect: "/data/week",
       children:[
         {
           path: 'week',

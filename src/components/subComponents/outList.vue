@@ -273,6 +273,14 @@ export default {
   mounted() {
     this.getOutList();
     this.getSort();
+  },
+  watch: {
+    time1: function() {
+      this.getOutList();
+    },
+    time2: function() {
+      this.getOutList();
+    }
   }
 };
 </script>

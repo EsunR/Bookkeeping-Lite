@@ -20,28 +20,49 @@
                 </div>
               </div>
               <div class="btn_box">
-                <el-button type="primary" class="prev" @click="prev">上 周</el-button>
-                <el-button type="primary" class="next" @click="next">下 周</el-button>
+                <el-button type="primary" class="prev" @click="prev">前一周</el-button>
+                <el-button type="primary" class="next" @click="next">后一周</el-button>
               </div>
             </div>
           </div>
         </div>
         <div class="col-md-8 col">
-          <div class="cahrt e_card">
-            <ve-line :data="lineData"></ve-line>
+          <div class="chart e_card">
+            <ve-line :data="lineData" :settings="{area: true}"></ve-line>
           </div>
         </div>
       </div>
     </div>
-    <div class="outList">
-      <outList :time1="time1" :time2="time2"></outList>
+    <div class="pie_box e_card">
+      <div class="row">
+        <div class="col-md-6">
+          <ve-pie v-if="haveSortData == true" :data="sortPieData"></ve-pie>
+          <div v-if="haveSortData == false" class="subtitle">（暂无记录）</div>
+          <div class="title">消费类型分析</div>
+        </div>
+        <div class="col-md-6">
+          <ve-pie v-if="haveWayData == true" :data="wayPieData"></ve-pie>
+          <div v-if="haveWayData == false" class="subtitle">（暂无记录）</div>
+          <div class="title">消费方式分析</div>
+        </div>
+      </div>
     </div>
+    <div class="mode_box e_card">
+      <div
+        class="mode_outList tab"
+        :class="{active: mode=='outList'}"
+        @click="mode = 'outList'"
+      >查看支出</div>
+      <div class="mode_inList tab" :class="{active: mode=='inList'}" @click="mode = 'inList'">查看收入</div>
+    </div>
+    <outList v-if="mode == 'outList'" :time1="time1" :time2="time2"></outList>
+    <inList v-if="mode == 'inList'" :time1="time1" :time2="time2"></inList>
   </div>
 </template>
 
 <script>
 import outList from "../subComponents/outList.vue";
-// import outListVue from "../subComponents/outList.vue";
+import inList from "../subComponents/inList.vue";
 export default {
   data() {
     return {
@@ -55,11 +76,17 @@ export default {
         .valueOf(),
       totalIn: "",
       totalOut: "",
-      lineData: {}
+      lineData: {},
+      sortPieData: {},
+      wayPieData: {},
+      mode: "outList",
+      haveSortData: false,
+      haveWayData: false
     };
   },
   components: {
-    outList
+    outList,
+    inList
   },
   methods: {
     getWeekOutList(callback) {
@@ -120,17 +147,17 @@ export default {
       }
       this.totalIn = total;
     },
-    formatData() {
+    formatLineData() {
       let lineData = {
-        columns: ["日期", "支出", "收入"],
+        columns: ["日期", "收入", "支出"],
         rows: [
-          { 日期: "星期一", 支出: 0, 收入: 0 },
-          { 日期: "星期二", 支出: 0, 收入: 0 },
-          { 日期: "星期三", 支出: 0, 收入: 0 },
-          { 日期: "星期四", 支出: 0, 收入: 0 },
-          { 日期: "星期五", 支出: 0, 收入: 0 },
-          { 日期: "星期六", 支出: 0, 收入: 0 },
-          { 日期: "星期日", 支出: 0, 收入: 0 }
+          { 日期: "星期一", 收入: 0, 支出: 0 },
+          { 日期: "星期二", 收入: 0, 支出: 0 },
+          { 日期: "星期三", 收入: 0, 支出: 0 },
+          { 日期: "星期四", 收入: 0, 支出: 0 },
+          { 日期: "星期五", 收入: 0, 支出: 0 },
+          { 日期: "星期六", 收入: 0, 支出: 0 },
+          { 日期: "星期日", 收入: 0, 支出: 0 }
         ]
       };
       let outList = this.weekOutList;
@@ -167,6 +194,84 @@ export default {
         });
       }
       this.lineData = lineData;
+    },
+    formatSortPieData() {
+      let outList = this.weekOutList;
+      let sortPieData = {
+        columns: ["消费类型", "金额"],
+        rows: []
+      };
+      outList.forEach(item => {
+        item.forEach(subItem => {
+          let sort = subItem.sort;
+          let money = subItem.money;
+          let index = sortPieData.length;
+          sortPieData.rows.some((rowsItem, rowsIndex) => {
+            if (rowsItem.消费类型 == sort) {
+              index = rowsIndex;
+              return true;
+            }
+          });
+          if (index == sortPieData.length) {
+            sortPieData.rows.push({ 消费类型: sort, 金额: money });
+          } else {
+            sortPieData.rows[index].金额 += money;
+          }
+        });
+      });
+      sortPieData.rows.length != 0
+        ? (this.haveSortData = true)
+        : (this.haveSortData = false);
+      this.sortPieData = sortPieData;
+    },
+    formatWayPieData() {
+      let outList = this.weekOutList;
+      let wayPieData = {
+        columns: ["消费方式", "金额"],
+        rows: []
+      };
+      outList.forEach(item => {
+        item.forEach(subItem => {
+          let way = subItem.way;
+          let money = subItem.money;
+          let index = wayPieData.length;
+          let wayId = way.toString();
+          switch (wayId) {
+            case "1":
+              way = "现金";
+              break;
+            case "2":
+              way = "支付宝";
+              break;
+            case "3":
+              way = "微信";
+              break;
+            case "4":
+              way = "其他";
+              break;
+          }
+          wayPieData.rows.some((rowsItem, rowsIndex) => {
+            if (rowsItem.消费方式 == way) {
+              index = rowsIndex;
+              return true;
+            }
+          });
+          if (index == wayPieData.length) {
+            wayPieData.rows.push({ 消费方式: way, 金额: money });
+          } else {
+            wayPieData.rows[index].金额 += money;
+          }
+        });
+      });
+      wayPieData.rows.length != 0
+        ? (this.haveWayData = true)
+        : (this.haveWayData = false);
+      this.wayPieData = wayPieData;
+    },
+    formatData() {
+      this.formatLineData();
+      this.formatSortPieData();
+      this.formatWayPieData();
     },
     prev() {
       this.time2 = this.time1 - 1000;
@@ -243,15 +348,50 @@ export default {
         .btn_box {
           display: flex;
           justify-content: space-between;
-          padding: 0 50px;
+          padding: 0 30px;
           margin-top: 40px;
         }
       }
     }
-    .cahrt {
+    .chart {
       height: 100%;
       padding-bottom: 0px;
     }
+  }
+}
+.pie_box {
+  padding-bottom: 0;
+  .subtitle {
+    margin-bottom: 60px;
+    margin-top: 30px;
+    text-align: center;
+  }
+  .title {
+    text-align: center;
+    margin-top: -30px;
+    font-size: 18px;
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #606266;
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+}
+
+.mode_box {
+  display: flex;
+  justify-content: space-between;
+  padding: 0;
+  overflow: hidden;
+  .tab {
+    width: 50%;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+  }
+  .active {
+    background-color: #409eff;
+    color: white;
   }
 }
 </style>

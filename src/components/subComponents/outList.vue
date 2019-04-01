@@ -1,5 +1,17 @@
 <template>
   <div id="list">
+    <div class="custom e_card">
+      <el-button type="info" size="mini" @click="getOutList(()=>{return true})">全部</el-button>
+      <el-button
+        type="primary"
+        size="mini"
+        v-for="item in sort"
+        :key="item.id"
+        @click="sortId = item.id"
+        plain
+      >{{item.sort}}</el-button>
+    </div>
+
     <div class="empty card" v-if="this.outList.length == 0">（暂无支出项）</div>
     <div class="day card" v-for="(item,index) in outList" :key="index">
       <div class="title">
@@ -154,12 +166,13 @@ export default {
           id: "4"
         }
       ],
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      sortId: ""
     };
   },
-  props: ["time1", "time2", "sortId"],
+  props: ["time1", "time2"],
   methods: {
-    getOutList() {
+    getOutList(callback) {
       this.axios
         .get("/getOutList", {
           params: {
@@ -170,9 +183,7 @@ export default {
         .then(res => {
           if (res.data.code == 1) {
             this.outList = res.data.data;
-            if (this.sortId) {
-              this.filterData();
-            }
+            callback();
           }
         })
         .catch(err => {
@@ -252,34 +263,44 @@ export default {
         });
     },
     filterData() {
-      // 深度拷贝this.outList对象
-      let filted = JSON.parse(JSON.stringify(this.outList));
-      // 处理记录，过滤掉非目标数据（注意：由于是由数组索引删除数组，所以需要倒序删除）
-      for (let i = filted.length - 1; i >= 0; i--) {
-        for (let j = filted[i].length - 1; j >= 0; j--) {
-          if (filted[i][j].sortId != parseInt(this.sortId)) {
-            filted[i].splice(j, 1);
+      this.getOutList(() => {
+        // 深度拷贝this.outList对象
+        let filted = JSON.parse(JSON.stringify(this.outList));
+        // 处理记录，过滤掉非目标数据（注意：由于是由数组索引删除数组，所以需要倒序删除）
+        for (let i = filted.length - 1; i >= 0; i--) {
+          for (let j = filted[i].length - 1; j >= 0; j--) {
+            if (filted[i][j].sortId != parseInt(this.sortId)) {
+              filted[i].splice(j, 1);
+            }
+          }
+          // 如果过滤后，当天的记录全部被过滤掉，则删除该条记录
+          if (filted[i].length == 0) {
+            filted.splice(i, 1);
           }
         }
-        // 如果过滤后，当天的记录全部被过滤掉，则删除该条记录
-        if (filted[i].length == 0) {
-          filted.splice(i, 1);
-        }
-      }
-      // 集中更改数据，触发Vue刷新视图
-      this.outList = filted;
+        // 集中更改数据，触发Vue刷新视图
+        this.outList = filted;
+      });
     }
   },
   mounted() {
-    this.getOutList();
-    this.getSort();
+    this.getOutList(() => {
+      this.getSort();
+    });
   },
   watch: {
     time1: function() {
-      this.getOutList();
+      this.getOutList(() => {
+        return true;
+      });
     },
     time2: function() {
-      this.getOutList();
+      this.getOutList(() => {
+        return true;
+      });
+    },
+    sortId: function() {
+      this.filterData();
     }
   }
 };
@@ -287,9 +308,19 @@ export default {
 
 <style lang='scss' scoped>
 #list {
+  .custom{
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    button{
+      margin-bottom: 10px;
+    }
+  }
   .empty {
     text-align: center;
     color: #909399;
+    margin-bottom: 40px;
   }
   .day {
     .title {

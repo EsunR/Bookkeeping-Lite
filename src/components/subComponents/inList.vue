@@ -187,6 +187,8 @@ export default {
   .empty {
     text-align: center;
     color: #909399;
+    text-align: center;
+    margin-bottom: 40px;
   }
   .day {
     .title {

@@ -59,6 +59,7 @@ export default {
                 }
                 // 保存token
                 localStorage.setItem("token", res.data.data.token);
+                localStorage.setItem("repayment", 1);
                 setTimeout(() => {
                   window.location.href = this.COMMON.index_location;
                 }, 1000);

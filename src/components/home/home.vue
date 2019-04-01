@@ -23,11 +23,24 @@
       <div class="add_btn shadow_base" @click="$router.push('/add')">
         <span class="mdi mdi-plus"></span>
       </div>
+
+      <div class="calendar_btn shadow_base" @click="$router.push('/addRepayment')">
+        <span class="mdi mdi-calendar"></span>
+      </div>
     </div>
+
     <div class="progressbar card">
       <div class="title">本月已度过</div>
       <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage" :status="status"></el-progress>
     </div>
+
+    <div v-if="repaymentListSetting" class="repaymentList_box">
+      <div class="repaymentList e_card" v-for="item in repaymentList" :key="item.id">
+        <div class="title">{{item.title}} - {{item.money}}元</div>
+        <div class="time">截止日：{{$moment(Number(item.targetTime)).format('YYYY年MM月DD日')}}</div>
+      </div>
+    </div>
+
     <transition>
       <router-view></router-view>
     </transition>
@@ -41,7 +54,22 @@ export default {
       todayOut: 0,
       todayIn: 0,
       percentage: 0,
-      status: "success"
+      status: "success",
+      repaymentList: [
+        {
+          id: 1,
+          targetTime: "1554048000000",
+          title: "花呗还款",
+          money: "100"
+        },
+        {
+          id: 2,
+          targetTime: "1554048000000",
+          title: "花呗还款",
+          money: "100"
+        }
+      ],
+      repaymentListSetting: Boolean(localStorage.getItem("repayment"))
     };
   },
   methods: {
@@ -111,11 +139,25 @@ export default {
           this.$message("服务器无法连接");
         });
     },
+    getRepaymentList() {
+      this.axios
+        .get("/getRepayment")
+        .then(res => {
+          if (res.data.code == 1) {
+            this.repaymentList = res.data.data;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.$message("服务器无法连接");
+        });
+    }
   },
   mounted() {
     this.getProgressbarData();
     this.getTodayOut();
     this.getTodayIn();
+    this.getRepaymentList();
   }
 };
 </script>
@@ -174,12 +216,38 @@ export default {
       background-color: #53a8ff;
     }
   }
+  .calendar_btn {
+    position: absolute;
+    bottom: -25px;
+    right: 90px;
+    line-height: 50px;
+    width: 50px;
+    background-color: #f56c6c;
+    text-align: center;
+    color: white;
+    font-size: 1.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    &:hover {
+      background-color: rgb(245, 129, 129);
+    }
+  }
 }
 
 .progressbar {
   .title {
     font-size: 14px;
     margin-bottom: 10px;
+  }
+}
+
+.repaymentList {
+  background-color: #f56c6c;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  .title {
+    color: white;
   }
 }
 

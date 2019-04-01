@@ -12,6 +12,7 @@ import income from './components/home/income.vue'
 import add from './components/add/add.vue'
 import addExpenditure from './components/add/addExpenditure.vue'
 import addIncome from './components/add/addIncome.vue'
+import addRepayment from './components/add/addRepayment.vue'
 
 // data
 import data from './components/data/data.vue'
@@ -19,6 +20,11 @@ import month from './components/data/month.vue'
 import week from './components/data/week.vue'
 import compared from './components/data/compared.vue'
 import customize from './components/data/customize.vue'
+
+// center
+import center from './components/center/center.vue'
+import recording from './components/center/recording.vue'
+import setting from './components/center/setting.vue'
 
 Vue.use(Router)
 
@@ -59,10 +65,14 @@ var router = new Router({
       ]
     },
     {
+      path: '/addRepayment',
+      component: addRepayment
+    },
+    {
       path: '/data',
       component: data,
       redirect: "/data/week",
-      children:[
+      children: [
         {
           path: 'week',
           component: week
@@ -78,6 +88,21 @@ var router = new Router({
         {
           path: 'customize',
           component: customize
+        }
+      ]
+    },
+    {
+      path: '/center',
+      component: center,
+      redirect: '/center/recording',
+      children: [
+        {
+          path: 'recording',
+          component: recording
+        },
+        {
+          path: 'setting',
+          component: setting
         }
       ]
     }

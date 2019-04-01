@@ -56,6 +56,20 @@
       </el-row>
     </el-form>
 
+    <div class="e_card">
+      <el-upload
+        action="http://upload.qiniup.com"
+        :on-success="uploadSuccess"
+        :limit="1"
+        list-type="picture"
+        :data="postData"
+        accept=".png, .jpg"
+      >
+        <el-button size="small" type="primary">上传微信截图</el-button>
+        <div slot="tip" class="el-upload__tip">提示：提取截图信息后会覆盖已填的信息</div>
+      </el-upload>
+    </div>
+
     <div class="btn_box">
       <el-button type="primary" @click="submit">确定添加</el-button>
     </div>
@@ -105,7 +119,13 @@ export default {
           way: "其他",
           id: "4"
         }
-      ]
+      ],
+      postData: {
+        // 测试token
+        token:
+          "noucWTUuRY84Z0DSDJyJiszjO7OtRY3Vtj4yAWT1:1D6bk4yfCW51XqjgG-igP_Bi6dc=:eyJzY29wZSI6Im5vdmVsLXN5c3RlbSIsImRlYWRsaW5lIjoxNTc1MTI5NjAwfQ=="
+      },
+      url: ""
     };
   },
   methods: {
@@ -121,7 +141,9 @@ export default {
     postForm() {
       let obj = this.form;
       obj.time = this.form.time.toString();
-      obj.money = (Number(this.form.money).toFixed(2)).toString();
+      obj.money = Number(this.form.money)
+        .toFixed(2)
+        .toString();
       this.axios
         .post("/addOut", obj)
         .then(res => {
@@ -147,6 +169,33 @@ export default {
           console.log(err);
           this.$message("服务器无法连接，获取消费类型失败");
         });
+    },
+    uploadSuccess(res) {
+      this.url = "http://study.esunr.xyz/" + res.key;
+      this.getPicInfo();
+    },
+    getPicInfo(){
+      // TODO: 上传图片
+      this.axios
+        .post('/getPicInfo',{
+          url: this.url
+        })
+        .then(res => {
+          if (res.data.code == 1) {
+            let data = res.data.data;
+            this.form.money = data.money;
+            this.form.time = data.time;
+            this.form.remark = data.remark;
+            this.form.way = "3";
+            this.$message.success('读取截图成功');
+          }else{
+            this.$message.error('读取失败，请重新上传');
+          }
+      })
+      .catch(err => {
+        console.log(err);
+        this.$message('服务器无法连接');
+      });
     }
   },
   mounted() {

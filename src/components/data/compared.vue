@@ -33,7 +33,7 @@
           <div class="outer_content content">
             <div class="subtitle">
               <span class="mdi mdi-calendar"></span>
-              <span>{{this.$moment(month_1).format('YYYY年M月')}}</span>
+              <span>{{this.$moment(month_2).format('YYYY年M月')}}</span>
             </div>
             <div class="money">￥{{totalOut_2 | money}}</div>
           </div>
@@ -58,7 +58,7 @@
           <div class="inner_contant content">
             <div class="subtitle">
               <span class="mdi mdi-calendar"></span>
-              <span>{{this.$moment(month_1).format('YYYY年M月')}}</span>
+              <span>{{this.$moment(month_2).format('YYYY年M月')}}</span>
             </div>
             <div class="money">￥{{totalIn_2 | money}}</div>
           </div>

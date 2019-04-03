@@ -221,7 +221,9 @@ export default {
             .then(res => {
               if (res.data.code == 1) {
                 this.$message.success("修改成功");
-                this.getOutList();
+                this.getOutList(() => {
+                  return true;
+                });
               }
             })
             .catch(err => {
@@ -240,7 +242,9 @@ export default {
         .then(res => {
           if (res.data.code == 1) {
             this.$message.success("删除成功");
-            this.getOutList();
+            this.getOutList(() => {
+              return true;
+            });
             this.dialogFormVisible = false;
           }
         })
@@ -308,12 +312,12 @@ export default {
 
 <style lang='scss' scoped>
 #list {
-  .custom{
+  .custom {
     padding-bottom: 10px;
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
-    button{
+    button {
       margin-bottom: 10px;
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <div id="addExpenditure">
+  <div id="addExpenditure" v-loading.fullscreen.lock="loading">
     <el-form
       :model="form"
       :rules="rules"
@@ -7,6 +7,7 @@
       label-position="top"
       :hide-required-asterisk="true"
       class="card"
+      element-loading-text="正在解析上传图片"
     >
       <!-- 第一行 -->
       <el-row :gutter="20">
@@ -80,6 +81,7 @@
 export default {
   data() {
     return {
+      loading: false,
       form: {
         money: "",
         sort: 1,
@@ -95,7 +97,7 @@ export default {
             trigger: ["blur", "change"]
           },
           {
-            pattern: /^[0-9]*(|.[0-9]+)$/,
+            pattern: /^[0-9]*(|[.][0-9]+)$/,
             message: "请输入数字",
             trigger: ["blur", "change"]
           }
@@ -125,7 +127,8 @@ export default {
         token:
           "noucWTUuRY84Z0DSDJyJiszjO7OtRY3Vtj4yAWT1:1D6bk4yfCW51XqjgG-igP_Bi6dc=:eyJzY29wZSI6Im5vdmVsLXN5c3RlbSIsImRlYWRsaW5lIjoxNTc1MTI5NjAwfQ=="
       },
-      url: ""
+      url: "",
+      words: []
     };
   },
   methods: {
@@ -173,29 +176,51 @@ export default {
     uploadSuccess(res) {
       this.url = "http://study.esunr.xyz/" + res.key;
       this.getPicInfo();
+      this.loading = true;
     },
-    getPicInfo(){
-      // TODO: 上传图片
+    getPicInfo() {
       this.axios
-        .post('/getPicInfo',{
+        .post("/getPicInfo", {
           url: this.url
         })
         .then(res => {
           if (res.data.code == 1) {
-            let data = res.data.data;
-            this.form.money = data.money;
-            this.form.time = data.time;
-            this.form.remark = data.remark;
-            this.form.way = "3";
-            this.$message.success('读取截图成功');
-          }else{
-            this.$message.error('读取失败，请重新上传');
+            for (let i in res.data.data) {
+              this.words.push(res.data.data[i].words);
+            }
+            this.getKeywords();
           }
-      })
-      .catch(err => {
-        console.log(err);
-        this.$message('服务器无法连接');
-      });
+        })
+        .catch(err => {
+          console.log(err);
+          this.$message("服务器无法连接");
+        });
+    },
+    getKeywords() {
+      let words = this.words;
+      for (let i in words) {
+        let moneyReg = /^[-]*[0-9]+[.][0-9]+$/;
+        let timeReg = /支付时间/;
+        let remarkReg = /商户全称/;
+        if (moneyReg.test(words[i])) {
+          if (Number(words[i]) < 0) {
+            this.form.money = (-Number(words[i])).toString();
+          } else {
+            this.form.money = words[i];
+          }
+          this.form.remark = words[i - 1];
+        }
+        if (timeReg.test(words[i])) {
+          let time = words[i].replace(timeReg, "");
+          time = time.slice(0, 10) + " " + time.slice(10);
+          this.form.time = this.$moment(time).valueOf();
+        }
+        if (remarkReg.test(words[i])) {
+          this.form.remark = words[i].replace(remarkReg, "");
+        }
+      }
+      this.form.way = "3";
+      this.loading = false;
     }
   },
   mounted() {

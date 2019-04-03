@@ -1,7 +1,6 @@
 <template>
   <div id="center">
     <div class="top_tab">
-      <div class="tab" :class="{active: active == 'recording'}" @click="tabClick('recording')">记录生活</div>
       <div class="tab" :class="{active: active == 'setting'}" @click="tabClick('setting')">设置</div>
     </div>
     <transition>
@@ -36,7 +35,7 @@ export default {
   overflow: hidden;
   margin-bottom: 20px;
   .tab {
-    width: 50%;
+    width: 100%;
     text-align: center;
     cursor: pointer;
     font-size: 14px;

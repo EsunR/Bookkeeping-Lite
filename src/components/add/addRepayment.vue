@@ -26,7 +26,12 @@
     </div>
 
     <div class="repaymentList_box">
-      <div class="repaymentList e_card" v-for="item in repaymentList" @click="deleteRepayment(item.id)" :key="item.id">
+      <div
+        class="repaymentList e_card"
+        v-for="item in repaymentList"
+        @click="deleteRepayment(item.id)"
+        :key="item.id"
+      >
         <div class="title">{{item.title}} - {{item.money}}元</div>
         <div class="time">截止日：{{$moment(Number(item.targetTime)).format('YYYY年MM月DD日')}}</div>
       </div>
@@ -41,20 +46,8 @@ export default {
       title: "",
       money: "",
       targetTime: "",
-      repaymentList: [
-        {
-          id: 1,
-          targetTime: "1554048000000",
-          title: "花呗还款",
-          money: "100"
-        },
-        {
-          id: 2,
-          targetTime: "1554048000000",
-          title: "花呗还款",
-          money: "100"
-        }
-      ]
+      repaymentList: [],
+      keyWords: []
     };
   },
   methods: {
@@ -92,29 +85,32 @@ export default {
           this.$message("服务器无法连接");
         });
     },
-    deleteRepayment(id){
-      this.$confirm('您确定要删除该还款提醒吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.axios
-          .get('/deleteRepayment?id='+id)
-          .then(res => {
-            if (res.data.code == 1) {
-              this.$message.success('删除成功!');
-            }
+    deleteRepayment(id) {
+      this.$confirm("您确定要删除该还款提醒吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.axios
+            .get("/deleteRepayment?id=" + id)
+            .then(res => {
+              if (res.data.code == 1) {
+                this.$message.success("删除成功!");
+                this.getRepaymentList();
+              }
+            })
+            .catch(err => {
+              console.log(err);
+              this.$message("服务器无法连接");
+            });
         })
-        .catch(err => {
-          console.log(err);
-          this.$message('服务器无法连接');
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "操作已取消"
+          });
         });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '操作已取消'
-        });
-      });
     }
   },
   mounted() {

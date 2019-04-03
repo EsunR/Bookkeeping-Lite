@@ -94,7 +94,7 @@ var router = new Router({
     {
       path: '/center',
       component: center,
-      redirect: '/center/recording',
+      redirect: '/center/setting',
       children: [
         {
           path: 'recording',

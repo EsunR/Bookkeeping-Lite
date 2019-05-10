@@ -4,8 +4,8 @@
 const host = "http://www.esunr.xyz:6060/api/";
 // const host = "http://localhost:8080/api/";
 
-const login_location = "/login.html"
-const index_location = "/index.html"
+const login_location = "./login.html"
+const index_location = "./index.html"
 
 export default {
   login_location,

@@ -1,8 +1,8 @@
-<center><div style="font-size: 28px; margin-bottom: 20px">记账薄·轻</div></center>
+# 记账薄·轻
 
-<center><img src="https://i.loli.net/2019/12/04/VHG5kWdu9aLJiSy.png"/> </center>
+![](https://i.loli.net/2019/12/04/VHG5kWdu9aLJiSy.png)
 
-<center><h1>说明</h1></center>
+# 说明
 
 本项目为 “记账薄·轻” 的前端项目源码以及设计文稿，仅供参考学习使用，附带后台 API 接口文档，可按照规范自行实现，API 端口请在 `/src/common.vue` 下修改。
 
